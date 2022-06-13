@@ -1,18 +1,20 @@
-# Fachuebergreifendes Projekt: Thema
+# Fachuebergreifendes Projekt: Wettervorhersagen
 
-Hier bitte 2-3 Sätze die Ihr Thema beschreiben
+Das Projekt besteht darin, eine Webanwendung zu entwickeln, die in der Lage ist, dem Benutzer verschiedene Wetterinformationen für die kommenden 5 Tage zu präsentieren. Das Hauptaugenmerk wird darauf liegen, eine Website zu erstellen, die in der Lage ist, diese Wetterinformationen in einer benutzerfreundlichen Art und Weise zu präsentieren, aber auch in der Lage sein sollte, reibungslos zu laufen und auch bei hohen Anforderungen zu funktionieren. Die Wetterinformationen werden über eine API abgerufen  
+
 
 ## Authoren
 
 Hier bitte Ihre Namen ergänzen
 
-1. Name1
-2. Name2
-3. Name3
-4. Name4
+1. Mohamed Ali Naffeti
+2. Marouan Lahouimel
+
 
 ## Hinweise
 
-- Legen Sie Ihre Daten zwingend in die jeweiligen Unterordner ab!
-- Fügen Sie am Ende in das ``README.md`` Installationshinweise und Hinweise für das Setup Ihres Projektergebnisses ein!
-- Sie können unterschiedliche Branches verwenden, Ergebnisse und Abgaben müssen aber im Master-Branch eingecheckt werden.
+- Projekt Mit "npm satrt" anfangen
+- Falls Pakete fehlen bitte die folgende Befehle ausführen:
+    für Tailwind: "npm install -D tailwindcss postcss autoprefixer", "npx tailwindcss init -p"
+    für Luxon: "npm install --save luxon"
+    für Unicons: "npm install --save @iconscout/react-unicons"
