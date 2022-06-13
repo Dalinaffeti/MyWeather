@@ -15,6 +15,8 @@ Hier bitte Ihre Namen ergänzen
 
 - Projekt Mit **"npm satrt"** anfangen
 - Falls **Pakete** fehlen bitte die folgende **Befehle** ausführen:
-    **für Tailwind:** "npm install -D tailwindcss postcss autoprefixer", "npx tailwindcss init -p"
-    **für Luxon:** "npm install --save luxon"
-    **für Unicons:** "npm install --save @iconscout/react-unicons"
+   
+-  **für Tailwind:** "npm install -D tailwindcss postcss autoprefixer", "npx tailwindcss init -p"
+  
+-   **für Luxon:** "npm install --save luxon"
+  -   **für Unicons:** "npm install --save @iconscout/react-unicons"
