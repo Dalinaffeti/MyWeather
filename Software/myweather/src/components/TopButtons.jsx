@@ -22,6 +22,10 @@ function TopButtons({setQuery}) {
         id:5,
         title:"Paris"
      },
+     {
+         id: 6,
+         title: "Berlin"
+     }
     ];
   return ( 
     <div className="flex items-center justify-around my-6">
