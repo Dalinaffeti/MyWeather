@@ -1,14 +1,20 @@
-import React, {useState} from 'react'
-import { UilSearch,UilLocationPoint } from '@iconscout/react-unicons';
+import React, { useState } from 'react'
+import { UilSearch, UilLocationPoint } from '@iconscout/react-unicons';
+import cities from './lib/city.list.json';
+import { GEO_API_URL, geoAPI } from '../api';
+import Select from 'react-select';
 
-function Inputss({setQuery, units, setUnits}) {
+function Inputss({ setQuery, units, setUnits }) {
   const [city, setCity] = useState("");
+ 
   const handleSearchClick = () => {
-    if(city !== '') setQuery({q: city})
+    if (city !== '') setQuery({ q: city })
   }
 
+  console.log(React.version);
+
   const handleLocationClick = () => {
-    if(navigator.geolocation) {
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         let lat = position.coords.latitude
         let lon = position.coords.longitude
@@ -18,45 +24,126 @@ function Inputss({setQuery, units, setUnits}) {
         })
       })
     }
-   
+
+  }
+  const [results, setResults] = useState([]);
+  const handleCityInput = (e) => {
+    setCity(e.currentTarget.value)
+    console.log(e.currentTarget.value);
+    let matchingCities = [];
+    const value = e.currentTarget.value;
+    if (value.length > 3) {
+      for (let city of cities) {
+        if (matchingCities.length >= 5) {
+          break;
+        }
+
+        const match = city.name.toLowerCase().startsWith(value.toLowerCase());
+
+        if (match) {
+          const cityData = {
+            ...city,
+            slug: `${city.name.toLowerCase().replace(/ /g, "-")}-${city.id}`,
+          };
+
+          matchingCities.push(cityData);
+          continue;
+        }
+      }
+    }
+    console.log(matchingCities);
+    return setResults(matchingCities);
   }
   const handleUnitsChange = (e) => {
     const selectedUnits = e.currentTarget.name;
-    if(units !== "") setUnits(selectedUnits);
+    if (units !== "") setUnits(selectedUnits);
+    console.log(e.currentTarget.value)
   }
+
+
+
+
   return (
     <div className="flex flex-row justify-center my-6">
-        <div className="flex flex-row w-3/4 items-center justify-center space-x-4">
-            <input type="text"
-            value={city}
-            onChange = {(e) => setCity(e.currentTarget.value)}
-            placeholder=" Search for city..."
-             className="text-xl font-light p-2 w-full shadow-xl focus:outline-none capitalize placeholder:lowercase"  
-             />
-             <UilSearch 
-             size={25} className="text-white cursor-pointe transition ease-out hover:scale-125"
-             onClick = {handleSearchClick}
-             />
-             <UilLocationPoint 
-             size={25} className="text-white cursor-pointer transition ease-out hover:scale-125"
-             
-              onClick= {handleLocationClick}
-             />
-        </div>
-           <div className="flex flex-row w-1/4 items-center justify-center">
-            <button name="metric" className="text-xl text-white font-light transition ease-out hover:scale-125"
-              onClick = { handleUnitsChange }
-            >
-              °C
-              </button>
-              <p className="text-xl text-white mx-1">|</p>
-              <button name="imperial" className="text-xl text-white font-light transition ease-out hover:scale-125"
-                            onClick = { handleUnitsChange }
-                            >
-              °F
-              </button>
+      <div className="flex flex-row w-3/4 items-center justify-center space-x-4">
+        <div className='search'>
 
-        </div>
+        
+        <input type="text"
+          value={city}
+          //(e) => setCity(e.currentTarget.value)
+          onChange={handleCityInput}
+          placeholder=" Search for city..."
+          className="text-xl font-light p-2 w-full shadow-xl focus:outline-none capitalize placeholder:lowercase"
+        />
+        {city.length > 3 && (
+          <ul>
+            
+            {results.length > 0 ? (
+              results.map((city) => {
+                return (
+                  <option>{city.name}</option>
+                  // <li key={city.slug}>
+                  //   {/* <Link href={`/location/${city.slug}`}> */}
+                  //     <a>
+                  //       {city.name}
+                  //       {city.state ? `, ${city.state}` : ""}{" "}
+                  //       <span>({city.country})</span>
+                  //     </a>
+                  //   {/* </Link> */}
+                  // </li>
+                );
+              })
+            ) : (
+              <li className="search__no-results">No results found</li>
+            )}
+            
+          </ul>
+        )}</div>
+        <select onChange={handleCityInput}>
+        {results.length > 0 ? (
+              results.map((city) => {
+                return (
+                  <option>{city.name}{city.state ? `, ${city.state}` : ""}{" "}</option>
+                  // <li key={city.slug}>
+                  //   {/* <Link href={`/location/${city.slug}`}> */}
+                  //     <a>
+                  //       {city.name}
+                  //       {city.state ? `, ${city.state}` : ""}{" "}
+                  //       <span>({city.country})</span>
+                  //     </a>
+                  //   {/* </Link> */}
+                  // </li>
+                );
+              })
+            ) : (
+              <li className="search__no-results">No results found</li>
+            )}
+        </select>
+        <UilSearch
+          size={25} className="text-white cursor-pointe transition ease-out hover:scale-125"
+          onClick={handleSearchClick}
+        />
+        <UilLocationPoint
+          size={25} className="text-white cursor-pointer transition ease-out hover:scale-125"
+
+          onClick={handleLocationClick}
+        />
+      </div>
+      <div className="flex flex-row w-1/4 items-center justify-center">
+        <button name="metric" className="text-xl text-white font-light transition ease-out hover:scale-125"
+          onClick={handleUnitsChange}
+        >
+          °C
+        </button>
+        <p className="text-xl text-white mx-1">|</p>
+        <button name="imperial" className="text-xl text-white font-light transition ease-out hover:scale-125"
+          onClick={handleUnitsChange}
+        >
+          °F
+        </button>
+
+      </div>
 
     </div>
   )

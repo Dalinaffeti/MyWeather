@@ -10,6 +10,7 @@ import getFormattedWeatherData from './Services/WeatherService';
 import { useEffect, useState, treshhold } from 'react';
 import { data } from 'autoprefixer';
 
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
