@@ -92,4 +92,4 @@ const getWeatherData = (infoType, searchParams) => {
   
   export default getFormattedWeatherData;
   
-  export { formatToLocalTime, iconUrlFromCode };
+  export { formatToLocalTime, iconUrlFromCode, API_KEY };

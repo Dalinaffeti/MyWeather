@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { UilSearch, UilLocationPoint } from '@iconscout/react-unicons';
 import cities from './lib/city.list.json';
-import { GEO_API_URL, geoAPI } from '../api';
 import Select from 'react-select';
 
 function Inputss({ setQuery, units, setUnits }) {

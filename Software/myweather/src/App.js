@@ -9,6 +9,8 @@ import getWeatherData from './Services/WeatherService';
 import getFormattedWeatherData from './Services/WeatherService';
 import { useEffect, useState, treshhold } from 'react';
 import { data } from 'autoprefixer';
+import Map from "./components/Map";
+
 
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -18,6 +20,20 @@ function App() {
   const [query,setQuery]= useState({q: 'berlin'})
   const [units,setUnits]= useState('metric')
   const [weather,setWeather]=useState(null)
+  useEffect(() => {
+    const script = document.createElement('script');
+
+    script.src = "https://unpkg.com/leaflet@1.8.0/dist/leaflet.js";
+    script.integrity = "sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    script.async = true;
+    script.crossOrigin = ""
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    }
+  }, []);
 
  
   useEffect(() => {
@@ -55,6 +71,8 @@ function App() {
          <TempratueAndDetails weather={weather} />
           <Forecast title="hourly forecast" items={weather.hourly} />
           <Forecast title="daily forecast" items={weather.daily} />
+          <Map weather={weather}/>
+
         </div>
       )}
 
