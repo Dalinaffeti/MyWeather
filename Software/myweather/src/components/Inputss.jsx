@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { UilSearch, UilLocationPoint } from '@iconscout/react-unicons';
 import cities from './lib/city.list.json';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { geoAPI, GEO_API_URL } from "../api";
 
 function Inputss({ setQuery, units, setUnits }) {
   const [city, setCity] = useState("");
@@ -31,7 +33,7 @@ function Inputss({ setQuery, units, setUnits }) {
     console.log(e.currentTarget.value);
     let matchingCities = [];
     const value = e.currentTarget.value;
-    if (value.length > 3) {
+    if (value.length > 2) {
       for (let city of cities) {
         if (matchingCities.length >= 5) {
           break;
@@ -58,7 +60,27 @@ function Inputss({ setQuery, units, setUnits }) {
     if (units !== "") setUnits(selectedUnits);
     console.log(e.currentTarget.value)
   }
-
+  const loadOptions = (inputValue) => {
+    if(inputValue> 2)
+    {
+      console.log(inputValue);
+    return fetch(
+      `${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
+      geoAPI
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        return {
+          options: response.data.map((city) => {
+            return {
+              value: `${city.latitude} ${city.longitude}`,
+              label: `${city.name}, ${city.countryCode}`,
+            };
+          }),
+        };
+      });
+    }
+  };
 
 
 
@@ -75,7 +97,7 @@ function Inputss({ setQuery, units, setUnits }) {
           placeholder=" Search for city..."
           className="text-xl font-light p-2 w-full shadow-xl focus:outline-none capitalize placeholder:lowercase"
         />
-        {city.length > 3 && (
+       {/* {city.length > 3 && (
           <ul>
             
             {results.length > 0 ? (
@@ -83,13 +105,13 @@ function Inputss({ setQuery, units, setUnits }) {
                 return (
                   <option>{city.name}</option>
                   // <li key={city.slug}>
-                  //   {/* <Link href={`/location/${city.slug}`}> */}
+                  //   {/* <Link href={`/location/${city.slug}`}> }
                   //     <a>
                   //       {city.name}
                   //       {city.state ? `, ${city.state}` : ""}{" "}
                   //       <span>({city.country})</span>
                   //     </a>
-                  //   {/* </Link> */}
+                  //   {/* </Link> }
                   // </li>
                 );
               })
@@ -98,12 +120,20 @@ function Inputss({ setQuery, units, setUnits }) {
             )}
             
           </ul>
-        )}</div>
-        <select onChange={handleCityInput}>
+        )}
+        */}
+        
+        <AsyncSelect 
+        onChange={handleCityInput}
+        loadOptions={loadOptions}
+        value={city}
+        >
         {results.length > 0 ? (
               results.map((city) => {
                 return (
-                  <option>{city.name}{city.state ? `, ${city.state}` : ""}{" "}</option>
+                  <option>{city.name}{city.state ? `, ${city.state}` : ""}{" "}       
+                    <span>({city.country})</span>
+                  </option>
                   // <li key={city.slug}>
                   //   {/* <Link href={`/location/${city.slug}`}> */}
                   //     <a>
@@ -118,7 +148,8 @@ function Inputss({ setQuery, units, setUnits }) {
             ) : (
               <li className="search__no-results">No results found</li>
             )}
-        </select>
+        </AsyncSelect>
+        </div>
         <UilSearch
           size={25} className="text-white cursor-pointe transition ease-out hover:scale-125"
           onClick={handleSearchClick}
