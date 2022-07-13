@@ -4,12 +4,17 @@ import cities from './lib/city.list.json';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { geoAPI, GEO_API_URL } from "../api";
+import debounce from 'lodash.debounce';
 
 function Inputss({ setQuery, units, setUnits }) {
   const [city, setCity] = useState("");
  
   const handleSearchClick = () => {
-    if (city !== '') setQuery({ q: city })
+    
+    if (city !== '') setQuery({ q: city.label})
+    
+    
+
   }
 
   console.log(React.version);
@@ -28,59 +33,70 @@ function Inputss({ setQuery, units, setUnits }) {
 
   }
   const [results, setResults] = useState([]);
-  const handleCityInput = (e) => {
-    setCity(e.currentTarget.value)
-    console.log(e.currentTarget.value);
-    let matchingCities = [];
-    const value = e.currentTarget.value;
-    if (value.length > 2) {
-      for (let city of cities) {
-        if (matchingCities.length >= 5) {
-          break;
-        }
-
-        const match = city.name.toLowerCase().startsWith(value.toLowerCase());
-
-        if (match) {
-          const cityData = {
-            ...city,
-            slug: `${city.name.toLowerCase().replace(/ /g, "-")}-${city.id}`,
-          };
-
-          matchingCities.push(cityData);
-          continue;
-        }
-      }
-    }
-    console.log(matchingCities);
-    return setResults(matchingCities);
+  const handleCityInput = (selected) =>{ 
+    const city = selected;
+    console.log(city)
+    setCity(city)
+  // setQuery({q: city})
   }
+    // const cit = this.e.target.value
+    // setCity(cit)
+    // // setQuery(input )
+    // console.log(cit);
+    // let matchingCities = [];
+    // const value = e.currentTarget.value;
+    // if (value.length > 2) {
+    //   for (let city of cities) {
+    //     if (matchingCities.length >= 5) {
+    //       break;
+    //     }
+
+    //     const match = city.name.toLowerCase().startsWith(value.toLowerCase());
+
+    //     if (match) {
+    //       const cityData = {
+    //         ...city,
+    //         slug: `${city.name.toLowerCase().replace(/ /g, "-")}-${city.id}`,
+    //       };
+
+    //       matchingCities.push(cityData);
+    //       continue;
+    //     }
+    //   }
+    // }
+    // console.log(matchingCities);
+    // return setResults(matchingCities);
+  // }
+  
+  
   const handleUnitsChange = (e) => {
     const selectedUnits = e.currentTarget.name;
     if (units !== "") setUnits(selectedUnits);
     console.log(e.currentTarget.value)
   }
-  const loadOptions = (inputValue) => {
-    if(inputValue> 2)
-    {
+  const _loadOptions = (inputValue, callback) => {
+    
       console.log(inputValue);
     return fetch(
       `${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
       geoAPI
     )
-      .then((response) => response.json())
+    .then((response) => response.json())
       .then((response) => {
-        return {
-          options: response.data.map((city) => {
-            return {
-              value: `${city.latitude} ${city.longitude}`,
+        const options = []
+        
+        response.data?.map((city) => {
+            options.push( {
+              // value: `${city.latitude} ${city.longitude}`,
               label: `${city.name}, ${city.countryCode}`,
-            };
+            });
           }),
-        };
+        
+        callback(options);
       });
-    }
+    
   };
+  const loadOptions = debounce(_loadOptions, 600);
 
 
 
@@ -90,13 +106,13 @@ function Inputss({ setQuery, units, setUnits }) {
         <div className='search'>
 
         
-        <input type="text"
+        {/* <input type="text"
           value={city}
           //(e) => setCity(e.currentTarget.value)
           onChange={handleCityInput}
           placeholder=" Search for city..."
           className="text-xl font-light p-2 w-full shadow-xl focus:outline-none capitalize placeholder:lowercase"
-        />
+        /> */}
        {/* {city.length > 3 && (
           <ul>
             
@@ -124,31 +140,34 @@ function Inputss({ setQuery, units, setUnits }) {
         */}
         
         <AsyncSelect 
-        onChange={handleCityInput}
-        loadOptions={loadOptions}
         value={city}
-        >
-        {results.length > 0 ? (
+        onChange={handleCityInput}
+        // {handleCityInput}
+        loadOptions={loadOptions}
+
+        
+        />
+        {/* {results.length > 0 ? (
               results.map((city) => {
                 return (
                   <option>{city.name}{city.state ? `, ${city.state}` : ""}{" "}       
                     <span>({city.country})</span>
                   </option>
                   // <li key={city.slug}>
-                  //   {/* <Link href={`/location/${city.slug}`}> */}
+                  //   {/* <Link href={`/location/${city.slug}`}> }
                   //     <a>
                   //       {city.name}
                   //       {city.state ? `, ${city.state}` : ""}{" "}
                   //       <span>({city.country})</span>
                   //     </a>
-                  //   {/* </Link> */}
+                  //   { </Link> }
                   // </li>
                 );
               })
             ) : (
               <li className="search__no-results">No results found</li>
-            )}
-        </AsyncSelect>
+            )} */}
+        
         </div>
         <UilSearch
           size={25} className="text-white cursor-pointe transition ease-out hover:scale-125"
