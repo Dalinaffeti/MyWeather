@@ -6,13 +6,20 @@ import AsyncSelect from 'react-select/async';
 import { geoAPI, GEO_API_URL } from "../api";
 import debounce from 'lodash.debounce';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function Inputss({ setQuery, units, setUnits }) {
   const [city, setCity] = useState("");
  
   const handleSearchClick = () => {
     
     if (city !== '') setQuery({ q: city.label})
-    
+    else{
+      toast.info ("can't fetch weather for the given city" );
+      console.log("no authorization")
+      
+    }
     
 
   }
@@ -20,6 +27,7 @@ function Inputss({ setQuery, units, setUnits }) {
   console.log(React.version);
 
   const handleLocationClick = () => {
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         let lat = position.coords.latitude
@@ -30,6 +38,13 @@ function Inputss({ setQuery, units, setUnits }) {
         })
       })
     }
+    else {
+      alert("Sorry Not available!");
+      toast.info ("can't fetch weather because of lack of authorization  " );
+      console.log("no authorization")
+  
+    }
+  
 
   }
   const [results, setResults] = useState([]);
@@ -72,38 +87,46 @@ function Inputss({ setQuery, units, setUnits }) {
   const handleUnitsChange = (e) => {
     const selectedUnits = e.currentTarget.name;
     if (units !== "") setUnits(selectedUnits);
+    else{
+      toast.info ("can't handle units exchange  " );
+    console.log("no authorization")
+    }
     console.log(e.currentTarget.value)
+    
   }
   const _loadOptions = (inputValue, callback) => {
+    const options = []
+
     
       console.log(inputValue);
     return fetch(
-      `${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`,
+      `${GEO_API_URL}/cities?minPopulation=1000&namePrefix=${inputValue}`,
       geoAPI
     )
     .then((response) => response.json())
       .then((response) => {
-        const options = []
         
         response.data?.map((city) => {
-            options.push( {
+           options.push( {
               // value: `${city.latitude} ${city.longitude}`,
               label: `${city.name}, ${city.countryCode}`,
-            });
-          }),
-        
-        callback(options);
-      });
-    
+            })
+            return options;
+          })
+          
+          callback(options)
+      }
+      );
+      
   };
-  const loadOptions = debounce(_loadOptions, 600);
+  const loadOptions = debounce(_loadOptions, 6000);
 
 
 
   return (
     <div className="flex flex-row justify-center my-6">
       <div className="flex flex-row w-3/4 items-center justify-center space-x-4">
-        <div className='search'>
+        
 
         
         {/* <input type="text"
@@ -140,10 +163,13 @@ function Inputss({ setQuery, units, setUnits }) {
         */}
         
         <AsyncSelect 
+        className="text-xl font-light p-2 w-full shadow-xl focus:outline-none capitalize placeholder:lowercase"
         value={city}
+        autoload={true}
+        key='search'
         onChange={handleCityInput}
         // {handleCityInput}
-        loadOptions={loadOptions}
+        loadOptions={_loadOptions}
 
         
         />
@@ -168,7 +194,7 @@ function Inputss({ setQuery, units, setUnits }) {
               <li className="search__no-results">No results found</li>
             )} */}
         
-        </div>
+        
         <UilSearch
           size={25} className="text-white cursor-pointe transition ease-out hover:scale-125"
           onClick={handleSearchClick}
@@ -178,6 +204,8 @@ function Inputss({ setQuery, units, setUnits }) {
 
           onClick={handleLocationClick}
         />
+
+
       </div>
       <div className="flex flex-row w-1/4 items-center justify-center">
         <button name="metric" className="text-xl text-white font-light transition ease-out hover:scale-125"
@@ -193,6 +221,7 @@ function Inputss({ setQuery, units, setUnits }) {
         </button>
 
       </div>
+      <ToastContainer autoClose={500} theme = 'colored' newestOnTop ={true}/>
 
     </div>
   )
