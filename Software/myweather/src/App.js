@@ -18,6 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [query,setQuery]= useState({q: 'berlin'})
+  const [citiesList, setCitiesList]= useState([])
   const [units,setUnits]= useState('metric')
   const [weather,setWeather]=useState(null)
   useEffect(() => {
@@ -46,6 +47,12 @@ function App() {
     }
     
     );
+
+    const favoritesList = localStorage.getItem("citiesList");
+    console.log(favoritesList);
+      if(favoritesList !== null) {
+         setCitiesList(JSON.parse(favoritesList));
+      }
   };
     
     fetchWeather();
@@ -63,11 +70,11 @@ function App() {
    <div className= {`flex flex-col h-screen py-5 px-32 bg-gradient-to-br from-cyan-700 to-blue-700 h-fit shadow-xl shadow-gray-400
    ${formatBackground()}
    `}>
-    <TopButtons setQuery={setQuery} />
+    <TopButtons setQuery={setQuery} citiesList={citiesList} />
     <Inputss setQuery={setQuery}  units={units} setUnits={setUnits}  />
     {weather && (
         <div>
-         <TimeAndLocation weather={weather}/>
+         <TimeAndLocation weather={weather} citiesList={citiesList} setCitiesList={setCitiesList} />
          <TempratueAndDetails weather={weather} />
           <Forecast title="hourly forecast" items={weather.hourly} />
           <Forecast title="daily forecast" items={weather.daily} />

@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.icon-heart {
+  margin-left: 16px;
+  stroke: #ff4a4a;
+}
+
+.icon-heart.filled {
+  fill: #ff4a4a;
+}
